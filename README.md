@@ -45,19 +45,6 @@
 ## 🛠️ 即時偵測系統與雙重門檻防誤報機制
 在實際車載應用中，「誤警報」與「漏報」同樣致命。為了給予駕駛最舒適且準確的警示體驗，我們在 `camera_demo.py` 中設計了**雙重門檻防誤報控制系統**：
 
-```mermaid
-graph TD
-    A[Webcam 影像擷取] --> B[影像前處理 224x224 & 標準化]
-    B --> C[MobileNetV3-Small 推論]
-    C --> D{預測為疲勞類別 sleepy/blink/yawn <br> 且 信心分數 >= CONFIDENCE_THRESHOLD?}
-    D -- Yes (判定疲勞) --> E[疲勞計數器 +1]
-    D -- No (清醒或不確定) --> F[疲勞計數器 -2 (最低為 0)]
-    E --> G{疲勞計數器 >= CONSECUTIVE_FRAMES_THRESHOLD?}
-    F --> H[更新 UI 進度條與狀態]
-    G -- Yes (達到門檻) --> I[🔴 觸發 WARNING 視覺警報與蜂鳴聲]
-    G -- No --> H
-```
-
 ### 🎛️ 雙重調校旋鈕（雙重門檻）
 1. **[旋鈕 1] 連續幀數限制 (`CONSECUTIVE_FRAMES_THRESHOLD = 45`)**
    - 在常見 30 FPS 鏡頭下，45 幀代表**必須連續偵測到 1.5 秒的疲勞狀態**才會觸發警告。這能完美排除正常的快速眨眼或駕駛轉頭等短暫行為，符合安全客觀規格。
